@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin - MGMU IQAC{% endblock %}
+
+{% block content %}
+<h2>Admin — Manage Institutes</h2>
+<div style="margin-top:12px; max-width:600px;">
+    <form method="POST" class="form-box">
+        <label for="institute_name">Add Institute</label>
+        <input id="institute_name" name="institute_name" placeholder="Institute name" />
+        <div style="margin-top:12px;"><button type="submit">Add</button></div>
+    </form>
+
+    <div style="margin-top:18px;">
+        <h3>Existing Institutes</h3>
+        <ul>
+            {% for i in institutes %}
+                <li style="display:flex; align-items:center; gap:12px;">
+                    <span>{{ i }}</span>
+                    <form method="post" action="{{ url_for('remove_institute') }}" style="display:inline; margin-left:auto;">
+                        <input type="hidden" name="institute" value="{{ i }}">
+                        <button type="submit" class="danger" onclick="return confirm('Remove {{ i }}?')">Remove</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><em>No institutes yet</em></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

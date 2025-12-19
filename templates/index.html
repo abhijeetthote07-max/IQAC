@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - MGMU Internal Quality Asessment Cell{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>MGMU Internal Quality Asessment Cell</h1>
+    <p style="margin-top:10px;">Committed to continuous improvement, quality assurance, and academic excellence. Explore our services, periodic reports, and contact the IQAC team.</p>
+    <div style="margin-top:18px; display:flex; gap:12px;">
+        <a href="{{ url_for('login') }}" style="background:var(--brown-700); color:var(--accent); padding:10px 14px; border-radius:6px; text-decoration:none; font-weight:700">Login</a>
+        <a href="#reports" style="background:#fff; border:1px solid #e7dfda; padding:10px 14px; border-radius:6px; text-decoration:none; color:var(--brown-900);">Reports</a>
+    </div>
+</section>
+
+<section style="margin-top:22px; display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+    <article style="background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 14px rgba(59,47,47,0.04)">
+        <h2>Our Mission</h2>
+        <p>To strive for academic quality through internal audits, auditor feedback, and faculty development programs.</p>
+    </article>
+    <article style="background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 14px rgba(59,47,47,0.04)">
+        <h2>Objectives</h2>
+        <ul>
+            <li>Promote quality culture</li>
+            <li>Regular monitoring and evaluation</li>
+            <li>Enhance academic standards</li>
+        </ul>
+    </article>
+</section>
+
+{% endblock %}

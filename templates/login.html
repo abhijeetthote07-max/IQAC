@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - MGMU Internal Quality Asessment Cell{% endblock %}
+
+{% block content %}
+<div class="form-box">
+    <h2>Login</h2>
+
+    <form method="POST">
+        <label>Position *</label>
+        <select name="login_by" required>
+            <option value="">-- Select Position --</option>
+            <option value="auditor">Auditor</option>
+            <option value="chancellor">Chancellor</option>
+            <option value="vice_chancellor">Vice chancellor</option>
+            <option value="director">Director</option>
+            <option value="iqac_coordinators">IQAC Coordinators</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <label>Password *</label>
+        <input type="password" name="password" placeholder="Enter Password" required>
+
+        <div class="captcha-box" style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+            <span class="captcha">{{ session.get('captcha') }}</span>
+            <input type="text" name="captcha" placeholder="Enter Captcha" required>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:16px;">
+            <button type="submit">Log In</button>
+            <button type="reset" class="cancel">Cancel</button>
+        </div>
+    </form>
+
+    <p class="msg">{{ message }}</p>
+</div>
+{% endblock %}
