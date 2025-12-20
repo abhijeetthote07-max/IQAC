@@ -12,6 +12,7 @@ app.secret_key = 'dev-secret-change-me'
 def load_institutes():
     try:
         with open('institutes.json', 'r') as f:
+
             return json.load(f)
     except:
         return []
@@ -83,6 +84,18 @@ ROLE_DISPLAY = {
     'hod': 'HOD',
     'faculty': 'Faculty',
 }
+
+# Roles that must approve a faculty report for it to be considered fully approved
+REQUIRED_APPROVERS = [
+    'auditor',
+    'university_iqac_coordination',
+    'registrar',
+    'chancellor',
+    'vice_chancellor',
+    'director',
+    'iqac_coordinators',
+    'hod'
+]
 
 @app.context_processor
 def inject_now():
@@ -185,11 +198,14 @@ def faculty_details():
 
 @app.route('/faculty_reports', methods=['GET', 'POST'])
 def faculty_reports():
-    allowed_roles = ['faculty', 'iqac_coordinators', 'director', 'university_iqac_coordination', 'registrar']
+    # Allow creation by faculty and approvals by approver roles
+    allowed_roles = ['faculty'] + REQUIRED_APPROVERS
     if session.get('role') not in allowed_roles and not session.get('is_admin'):
         return redirect(url_for('login'))
     if request.method == 'POST':
-        if session.get('role') == 'faculty':
+        role = session.get('role')
+        # Faculty can create reports
+        if role == 'faculty':
             report_title = request.form.get('report_title', '').strip()
             report_content = request.form.get('report_content', '').strip()
             if report_title and report_content:
@@ -198,11 +214,39 @@ def faculty_reports():
                     'content': report_content,
                     'date': datetime.now().isoformat(),
                     'status': 'pending',
-                    'auditor_notes': ''
+                    'auditor_notes': '',
+                    'approvals': {}  # track approvals per role
                 }
                 app.config['FACULTY_REPORTS'].append(report)
                 save_faculty_reports()
-    return render_template('faculty_reports.html', reports=app.config['FACULTY_REPORTS'])
+        # Approver roles can approve/reject
+        elif role in REQUIRED_APPROVERS:
+            try:
+                report_index = int(request.form.get('report_index', '-1'))
+            except ValueError:
+                report_index = -1
+            action = request.form.get('action')
+            approver_notes = request.form.get('approver_notes', '').strip()
+            if 0 <= report_index < len(app.config['FACULTY_REPORTS']):
+                report = app.config['FACULTY_REPORTS'][report_index]
+                if 'approvals' not in report:
+                    report['approvals'] = {}
+                if action == 'approve':
+                    report['approvals'][role] = {'decision': 'approved', 'notes': approver_notes, 'time': datetime.now().isoformat()}
+                elif action == 'reject':
+                    report['approvals'][role] = {'decision': 'rejected', 'notes': approver_notes, 'time': datetime.now().isoformat()}
+                # recompute overall status
+                decisions = [v['decision'] for v in report.get('approvals', {}).values()]
+                if 'rejected' in decisions:
+                    report['status'] = 'rejected'
+                else:
+                    # check if all required approvers have approved
+                    if all(r in report.get('approvals', {}) and report['approvals'][r]['decision'] == 'approved' for r in REQUIRED_APPROVERS):
+                        report['status'] = 'approved'
+                    else:
+                        report['status'] = 'pending'
+                save_faculty_reports()
+    return render_template('faculty_reports.html', reports=app.config['FACULTY_REPORTS'], required_approvers=REQUIRED_APPROVERS)
 
 @app.route('/audit_reports', methods=['GET', 'POST'])
 def audit_reports():
@@ -213,10 +257,28 @@ def audit_reports():
         status = request.form.get('status')
         notes = request.form.get('auditor_notes', '').strip()
         if 0 <= report_index < len(app.config['FACULTY_REPORTS']):
-            app.config['FACULTY_REPORTS'][report_index]['status'] = status
-            app.config['FACULTY_REPORTS'][report_index]['auditor_notes'] = notes
+            report = app.config['FACULTY_REPORTS'][report_index]
+            report['auditor_notes'] = notes
+            # Record auditor's approval/rejection as part of approvals
+            if 'approvals' not in report:
+                report['approvals'] = {}
+            if status == 'approved':
+                report['approvals']['auditor'] = {'decision': 'approved', 'notes': notes, 'time': datetime.now().isoformat()}
+            elif status == 'rejected':
+                report['approvals']['auditor'] = {'decision': 'rejected', 'notes': notes, 'time': datetime.now().isoformat()}
+
+            # recompute overall status similar to faculty_reports
+            decisions = [v['decision'] for v in report.get('approvals', {}).values()]
+            if 'rejected' in decisions:
+                report['status'] = 'rejected'
+            else:
+                if all(r in report.get('approvals', {}) and report['approvals'][r]['decision'] == 'approved' for r in REQUIRED_APPROVERS):
+                    report['status'] = 'approved'
+                else:
+                    report['status'] = 'pending'
+
             save_faculty_reports()
-    return render_template('audit_reports.html', reports=app.config['FACULTY_REPORTS'])
+    return render_template('audit_reports.html', reports=app.config['FACULTY_REPORTS'], required_approvers=REQUIRED_APPROVERS)
 
 
 @app.route('/audit_questionnaire/<int:report_index>', methods=['GET', 'POST'])
@@ -229,7 +291,7 @@ def audit_questionnaire(report_index):
     if report_index < 0 or report_index >= len(app.config['FACULTY_REPORTS']):
         return redirect(url_for('audit_reports'))
 
-    # questionnaire - extend or move to a config/file if needed
+    # base questionnaire - extend or move to a config/file if needed
     questions = [
         "Are teaching-learning processes satisfactory?",
         "Is documentation complete and up-to-date?",
@@ -240,7 +302,21 @@ def audit_questionnaire(report_index):
 
     report = app.config['FACULTY_REPORTS'][report_index]
 
+    # If previous answers contained custom questions, include them in the questions list
+    if report.get('audit_answers'):
+        for qkey in report['audit_answers'].keys():
+            if qkey not in questions:
+                questions.append(qkey)
+
     if request.method == 'POST':
+        # Support dynamic number of questions. Client will send total_questions and optional custom_qtext_{i}
+        total = int(request.form.get('total_questions', len(questions)))
+        # Append any newly created custom questions
+        for i in range(len(questions), total):
+            qtext = request.form.get(f'custom_qtext_{i}', '').strip()
+            if qtext:
+                questions.append(qtext)
+
         answers = {}
         for i, q in enumerate(questions):
             val = request.form.get(f'q_{i}', '').upper()

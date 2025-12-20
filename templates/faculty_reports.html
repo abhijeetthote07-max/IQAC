@@ -28,6 +28,45 @@
                         {% if report.auditor_notes %}
                             <p><em>Auditor Notes: {{ report.auditor_notes }}</em></p>
                         {% endif %}
+
+                        {# Approvals summary for required approvers #}
+                        <div style="margin-top:8px; border-top:1px solid #eee; padding-top:8px;">
+                            <strong>Approvals:</strong>
+                            <ul>
+                                {% for r in required_approvers %}
+                                    {% set apr = (report.approvals or {}).get(r) %}
+                                    <li>
+                                        <strong>{{ ROLE_DISPLAY.get(r, r) }}:</strong>
+                                        {% if apr %}
+                                            <span style="color: {% if apr.decision == 'approved' %}green{% else %}red{% endif %};">{{ apr.decision|title }}</span>
+                                            {% if apr.notes %}
+                                                - <em>{{ apr.notes }}</em>
+                                            {% endif %}
+                                        {% else %}
+                                            <span style="color:orange;">Pending</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            {# If current user is one of the required approvers and hasn't acted yet, show the approve/reject form #}
+                            {% if session.role in required_approvers %}
+                                {% if (not report.approvals) or (session.role not in report.approvals) %}
+                                    <form method="POST" style="margin-top:8px;">
+                                        <input type="hidden" name="report_index" value="{{ loop.index0 }}">
+                                        <label>{{ ROLE_DISPLAY.get(session.role, session.role) }} Notes (optional)</label>
+                                        <textarea name="approver_notes" rows="2"></textarea>
+                                        <div style="margin-top:6px;">
+                                            <button type="submit" name="action" value="approve">Approve</button>
+                                            <button type="submit" name="action" value="reject">Reject</button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <p style="margin-top:6px;"><em>You have already submitted your decision.</em></p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
                     </li>
                 {% endfor %}
             </ul>
