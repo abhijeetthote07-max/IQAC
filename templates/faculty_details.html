@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Details - MGMU IQAC{% endblock %}
+
+{% block content %}
+<h2>Faculty Details</h2>
+<div style="margin-top:12px; max-width:600px;">
+    {% if session.role == 'faculty' %}
+        <form method="POST" class="form-box">
+            <label for="name">Name *</label>
+            <input id="name" name="name" value="{{ details.get('name', '') }}" placeholder="Full Name" required />
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" value="{{ details.get('email', '') }}" placeholder="Email Address" />
+
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" value="{{ details.get('phone', '') }}" placeholder="Phone Number" />
+
+            <label for="department">Department</label>
+            <input id="department" name="department" value="{{ details.get('department', '') }}" placeholder="Department" />
+
+            <div style="margin-top:12px;"><button type="submit">Save Details</button></div>
+        </form>
+    {% else %}
+        <div class="form-box">
+            <p><strong>Name:</strong> {{ details.get('name', 'Not provided') }}</p>
+            <p><strong>Email:</strong> {{ details.get('email', 'Not provided') }}</p>
+            <p><strong>Phone:</strong> {{ details.get('phone', 'Not provided') }}</p>
+            <p><strong>Department:</strong> {{ details.get('department', 'Not provided') }}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

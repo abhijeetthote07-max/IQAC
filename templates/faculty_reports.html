@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Reports - MGMU IQAC{% endblock %}
+
+{% block content %}
+<h2>Teaching Skills Reports</h2>
+<div style="margin-top:12px; max-width:800px;">
+    {% if session.role == 'faculty' %}
+        <form method="POST" class="form-box">
+            <label for="report_title">Report Title *</label>
+            <input id="report_title" name="report_title" placeholder="Report Title" required />
+
+            <label for="report_content">Report Content *</label>
+            <textarea id="report_content" name="report_content" rows="6" placeholder="Details about teaching skills, feedback, etc." required></textarea>
+
+            <div style="margin-top:12px;"><button type="submit">Add Report</button></div>
+        </form>
+    {% endif %}
+
+    <div style="margin-top:18px;">
+        <h3>Existing Reports</h3>
+        {% if reports %}
+            <ul>
+                {% for report in reports %}
+                    <li style="margin-bottom:12px; padding:8px; border:1px solid #ddd;">
+                        <strong>{{ report.title }}</strong> ({{ report.date }}) - <span style="color: {% if report.status == 'approved' %}green{% elif report.status == 'rejected' %}red{% else %}orange{% endif %};">{{ report.status|title }}</span>
+                        <p>{{ report.content }}</p>
+                        {% if report.auditor_notes %}
+                            <p><em>Auditor Notes: {{ report.auditor_notes }}</em></p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><em>No reports yet.</em></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

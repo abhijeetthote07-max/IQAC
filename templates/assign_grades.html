@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Assign Grades - MGMU IQAC{% endblock %}
+
+{% block content %}
+<h2>Assign Grades to Institutes</h2>
+<div style="margin-top:12px; max-width:600px;">
+    <form method="POST" class="form-box">
+        <label for="institute">Select Institute</label>
+        <select id="institute" name="institute" required>
+            <option value="">-- Select Institute --</option>
+            {% for inst in institutes %}
+                <option value="{{ inst }}">{{ inst }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="grade">Grade</label>
+        <select id="grade" name="grade" required>
+            <option value="">-- Select Grade --</option>
+            <option value="A+">A+</option>
+            <option value="A">A</option>
+            <option value="B+">B+</option>
+            <option value="B">B</option>
+            <option value="C+">C+</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="F">F</option>
+        </select>
+
+        <div style="margin-top:12px;"><button type="submit">Assign Grade</button></div>
+    </form>
+
+    <div style="margin-top:18px;">
+        <h3>Current Grades</h3>
+        {% if credits %}
+            <ul>
+                {% for inst, grade in credits.items() %}
+                    <li>{{ inst }}: Grade {{ grade }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><em>No grades assigned yet.</em></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

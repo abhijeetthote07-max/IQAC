@@ -8,41 +8,80 @@ app = Flask(__name__)
 # NOTE: keep a secure secret in production (env var or config)
 app.secret_key = 'dev-secret-change-me'
 
-# Persistent store for institutes (simple JSON file for development)
-INSTITUTES_FILE = os.path.join(os.path.dirname(__file__), 'institutes.json')
-
+# JSON-based data storage
 def load_institutes():
     try:
-        with open(INSTITUTES_FILE, 'r', encoding='utf-8') as f:
+        with open('institutes.json', 'r') as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except:
         return []
 
 def save_institutes():
-    os.makedirs(os.path.dirname(INSTITUTES_FILE), exist_ok=True)
-    with open(INSTITUTES_FILE, 'w', encoding='utf-8') as f:
-        json.dump(app.config['INSTITUTES'], f, indent=2, ensure_ascii=False)
+    with open('institutes.json', 'w') as f:
+        json.dump(app.config['INSTITUTES'], f)
+
+def load_faculty_details():
+    try:
+        with open('faculty_details.json', 'r') as f:
+            return json.load(f)
+    except:
+        return {}
+
+def save_faculty_details():
+    with open('faculty_details.json', 'w') as f:
+        json.dump(app.config['FACULTY_DETAILS'], f)
+
+def load_faculty_reports():
+    try:
+        with open('faculty_reports.json', 'r') as f:
+            return json.load(f)
+    except:
+        return []
+
+def save_faculty_reports():
+    with open('faculty_reports.json', 'w') as f:
+        json.dump(app.config['FACULTY_REPORTS'], f)
+
+def load_credits():
+    try:
+        with open('credits.json', 'r') as f:
+            return json.load(f)
+    except:
+        return {}
+
+def save_credits():
+    with open('credits.json', 'w') as f:
+        json.dump(app.config['CREDITS'], f)
 
 # load at startup
 app.config['INSTITUTES'] = load_institutes()
+app.config['FACULTY_DETAILS'] = load_faculty_details()
+app.config['FACULTY_REPORTS'] = load_faculty_reports()
+app.config['CREDITS'] = load_credits()
 
 # Default credentials for roles (development only - replace with secure store)
 CREDENTIALS = {
     'auditor': '1234',
-    'admin': 'adminpass',
+    'university_iqac_coordination': 'adminpass',
+    'registrar': 'registrarpass',
     'chancellor': 'chancellorpass',
     'vice_chancellor': 'vcpass',
     'director': 'directorpass',
     'iqac_coordinators': 'iqacpass',
+    'hod': 'hodpass',
+    'faculty': 'facultypass',
 }
 
 ROLE_DISPLAY = {
     'auditor': 'Auditor',
-    'admin': 'Admin',
+    'university_iqac_coordination': 'University IQAC Coordination',
+    'registrar': 'Registrar',
     'chancellor': 'Chancellor',
     'vice_chancellor': 'Vice Chancellor',
     'director': 'Director',
     'iqac_coordinators': 'IQAC Coordinators',
+    'hod': 'HOD',
+    'faculty': 'Faculty',
 }
 
 @app.context_processor
@@ -78,7 +117,7 @@ def login():
         expected_password = CREDENTIALS.get(login_by)
         if expected_password and password == expected_password and captcha == expected:
             # Admin gets special privileges
-            if login_by == 'admin':
+            if login_by in ['university_iqac_coordination', 'registrar']:
                 session['is_admin'] = True
                 session['selected_institute'] = None
                 session.pop('captcha', None)
@@ -123,6 +162,73 @@ def dashboard():
     if not (session.get('is_admin') or session.get('role')):
         return redirect(url_for('login'))
     return render_template('dashboard.html', role=session.get('role'), institutes=app.config['INSTITUTES'])
+
+@app.route('/faculty_details', methods=['GET', 'POST'])
+def faculty_details():
+    allowed_roles = ['faculty', 'iqac_coordinators', 'director', 'university_iqac_coordination', 'registrar']
+    if session.get('role') not in allowed_roles and not session.get('is_admin'):
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        if session.get('role') == 'faculty':
+            name = request.form.get('name', '').strip()
+            email = request.form.get('email', '').strip()
+            phone = request.form.get('phone', '').strip()
+            department = request.form.get('department', '').strip()
+            app.config['FACULTY_DETAILS'] = {
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'department': department
+            }
+            save_faculty_details()
+    return render_template('faculty_details.html', details=app.config['FACULTY_DETAILS'])
+
+@app.route('/faculty_reports', methods=['GET', 'POST'])
+def faculty_reports():
+    allowed_roles = ['faculty', 'iqac_coordinators', 'director', 'university_iqac_coordination', 'registrar']
+    if session.get('role') not in allowed_roles and not session.get('is_admin'):
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        if session.get('role') == 'faculty':
+            report_title = request.form.get('report_title', '').strip()
+            report_content = request.form.get('report_content', '').strip()
+            if report_title and report_content:
+                report = {
+                    'title': report_title,
+                    'content': report_content,
+                    'date': datetime.now().isoformat(),
+                    'status': 'pending',
+                    'auditor_notes': ''
+                }
+                app.config['FACULTY_REPORTS'].append(report)
+                save_faculty_reports()
+    return render_template('faculty_reports.html', reports=app.config['FACULTY_REPORTS'])
+
+@app.route('/audit_reports', methods=['GET', 'POST'])
+def audit_reports():
+    if session.get('role') != 'auditor':
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        report_index = int(request.form.get('report_index'))
+        status = request.form.get('status')
+        notes = request.form.get('auditor_notes', '').strip()
+        if 0 <= report_index < len(app.config['FACULTY_REPORTS']):
+            app.config['FACULTY_REPORTS'][report_index]['status'] = status
+            app.config['FACULTY_REPORTS'][report_index]['auditor_notes'] = notes
+            save_faculty_reports()
+    return render_template('audit_reports.html', reports=app.config['FACULTY_REPORTS'])
+
+@app.route('/assign_grades', methods=['GET', 'POST'])
+def assign_grades():
+    if session.get('role') != 'auditor':
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        institute = request.form.get('institute')
+        grade = request.form.get('grade')
+        if institute and grade:
+            app.config['CREDITS'][institute] = grade
+            save_credits()
+    return render_template('assign_grades.html', institutes=app.config['INSTITUTES'], credits=app.config['CREDITS'])
 
 @app.route('/select_institute', methods=['POST'])
 def select_institute():

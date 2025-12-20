@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Audit Reports - MGMU IQAC{% endblock %}
+
+{% block content %}
+<h2>Audit Faculty Reports</h2>
+<div style="margin-top:12px; max-width:1000px;">
+    {% if reports %}
+        {% for report in reports %}
+            <div style="margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:5px;">
+                <h3>{{ report.title }}</h3>
+                <p><strong>Date:</strong> {{ report.date }}</p>
+                <p><strong>Content:</strong> {{ report.content }}</p>
+                <p><strong>Status:</strong> <span style="color: {% if report.status == 'approved' %}green{% elif report.status == 'rejected' %}red{% else %}orange{% endif %};">{{ report.status|title }}</span></p>
+                {% if report.auditor_notes %}
+                    <p><strong>Auditor Notes:</strong> {{ report.auditor_notes }}</p>
+                {% endif %}
+
+                <form method="POST" style="margin-top:10px;">
+                    <input type="hidden" name="report_index" value="{{ loop.index0 }}">
+                    <label>Status:</label>
+                    <select name="status">
+                        <option value="pending" {% if report.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="approved" {% if report.status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="rejected" {% if report.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                    <label>Notes:</label>
+                    <textarea name="auditor_notes" rows="2" placeholder="Auditor feedback...">{{ report.auditor_notes }}</textarea>
+                    <button type="submit" style="margin-left:10px;">Update</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p><em>No reports to audit.</em></p>
+    {% endif %}
+</div>
+{% endblock %}

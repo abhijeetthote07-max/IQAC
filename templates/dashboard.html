@@ -3,8 +3,26 @@
 {% block title %}Dashboard - MGMU IQAC{% endblock %}
 
 {% block content %}
-<h2>{{ ROLE_DISPLAY.get(role, role) }} — Institutes</h2>
+<h2>{{ ROLE_DISPLAY.get(role, role) }} Dashboard</h2>
 <div style="margin-top:12px; max-width:800px;">
+    {% if role == 'faculty' %}
+        <div style="margin-bottom:20px;">
+            <a href="{{ url_for('faculty_details') }}" style="margin-right:12px; padding:8px 16px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">My Details</a>
+            <a href="{{ url_for('faculty_reports') }}" style="padding:8px 16px; background:#28a745; color:white; text-decoration:none; border-radius:4px;">Teaching Reports</a>
+        </div>
+    {% elif role == 'auditor' %}
+        <div style="margin-bottom:20px;">
+            <a href="{{ url_for('audit_reports') }}" style="margin-right:12px; padding:8px 16px; background:#dc3545; color:white; text-decoration:none; border-radius:4px;">Audit Reports</a>
+            <a href="{{ url_for('assign_grades') }}" style="margin-right:12px; padding:8px 16px; background:#ffc107; color:black; text-decoration:none; border-radius:4px;">Assign Grades</a>
+        </div>
+    {% elif role in ['iqac_coordinators', 'director', 'admin'] %}
+        <div style="margin-bottom:20px;">
+            <a href="{{ url_for('faculty_details') }}" style="margin-right:12px; padding:8px 16px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">View Faculty Details</a>
+            <a href="{{ url_for('faculty_reports') }}" style="padding:8px 16px; background:#28a745; color:white; text-decoration:none; border-radius:4px;">View Faculty Reports</a>
+        </div>
+    {% endif %}
+
+    <h3>Institutes</h3>
     {% if institutes %}
         <form method="post" action="{{ url_for('select_institute') }}" style="margin-bottom:12px;">
             <label for="institute">Select Institute</label>
