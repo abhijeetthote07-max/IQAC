@@ -7,6 +7,9 @@
 <div style="margin-top:12px; max-width:600px;">
     {% if session.role == 'faculty' %}
         <form method="POST" class="form-box">
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:8px;">
+                <button type="button" onclick="clearFacultyForm()" class="cancel">Create New</button>
+            </div>
             <label for="name">Name *</label>
             <input id="name" name="name" value="{{ details.get('name', '') }}" placeholder="Full Name" required />
 
@@ -21,12 +24,53 @@
 
             <div style="margin-top:12px;"><button type="submit">Save Details</button></div>
         </form>
+        <script>
+            function clearFacultyForm(){
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('department').value = '';
+            }
+        </script>
     {% else %}
         <div class="form-box">
             <p><strong>Name:</strong> {{ details.get('name', 'Not provided') }}</p>
             <p><strong>Email:</strong> {{ details.get('email', 'Not provided') }}</p>
             <p><strong>Phone:</strong> {{ details.get('phone', 'Not provided') }}</p>
             <p><strong>Department:</strong> {{ details.get('department', 'Not provided') }}</p>
+        </div>
+    {% endif %}
+    
+    {# Show all faculty entries to admins and IQAC roles #}
+    {% if session.is_admin or session.role in ['iqac_coordinators', 'director', 'university_iqac_coordination', 'registrar'] %}
+        <div style="margin-top:18px; max-width:800px;">
+            <h3>All Faculty Entries</h3>
+            {% if all_details and all_details|length > 0 %}
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; border-bottom:1px solid #ccc; padding:6px">Name</th>
+                            <th style="text-align:left; border-bottom:1px solid #ccc; padding:6px">Email</th>
+                            <th style="text-align:left; border-bottom:1px solid #ccc; padding:6px">Phone</th>
+                            <th style="text-align:left; border-bottom:1px solid #ccc; padding:6px">Department</th>
+                            <th style="text-align:left; border-bottom:1px solid #ccc; padding:6px">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in all_details|reverse %}
+                            <tr>
+                                <td style="padding:6px">{{ f.name or f['name'] }}</td>
+                                <td style="padding:6px">{{ f.email or f['email'] }}</td>
+                                <td style="padding:6px">{{ f.phone or f['phone'] }}</td>
+                                <td style="padding:6px">{{ f.department or f['department'] }}</td>
+                                <td style="padding:6px">{{ f.created_at or f['created_at'] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No faculty entries yet.</p>
+            {% endif %}
         </div>
     {% endif %}
 </div>

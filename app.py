@@ -25,7 +25,8 @@ def load_faculty_details():
         with open('faculty_details.json', 'r') as f:
             return json.load(f)
     except:
-        return {}
+        # store as a list of faculty entries
+        return []
 
 def save_faculty_details():
     with open('faculty_details.json', 'w') as f:
@@ -64,7 +65,6 @@ CREDENTIALS = {
     'auditor': '1234',
     'university_iqac_coordination': 'adminpass',
     'registrar': 'registrarpass',
-    'chancellor': 'chancellorpass',
     'vice_chancellor': 'vcpass',
     'director': 'directorpass',
     'iqac_coordinators': 'iqacpass',
@@ -76,7 +76,6 @@ ROLE_DISPLAY = {
     'auditor': 'Auditor',
     'university_iqac_coordination': 'University IQAC Coordination',
     'registrar': 'Registrar',
-    'chancellor': 'Chancellor',
     'vice_chancellor': 'Vice Chancellor',
     'director': 'Director',
     'iqac_coordinators': 'IQAC Coordinators',
@@ -174,14 +173,25 @@ def faculty_details():
             email = request.form.get('email', '').strip()
             phone = request.form.get('phone', '').strip()
             department = request.form.get('department', '').strip()
-            app.config['FACULTY_DETAILS'] = {
+            entry = {
                 'name': name,
                 'email': email,
                 'phone': phone,
-                'department': department
+                'department': department,
+                'created_at': datetime.now().isoformat()
             }
+            # append new faculty entry
+            if not isinstance(app.config.get('FACULTY_DETAILS'), list):
+                app.config['FACULTY_DETAILS'] = []
+            app.config['FACULTY_DETAILS'].append(entry)
             save_faculty_details()
-    return render_template('faculty_details.html', details=app.config['FACULTY_DETAILS'])
+            # redirect to avoid form resubmission and show saved values
+            return redirect(url_for('faculty_details'))
+    # choose the most recent entry to prefill the form for the faculty user
+    details = {}
+    if isinstance(app.config.get('FACULTY_DETAILS'), list) and app.config['FACULTY_DETAILS']:
+        details = app.config['FACULTY_DETAILS'][-1]
+    return render_template('faculty_details.html', details=details, all_details=app.config.get('FACULTY_DETAILS', []))
 
 @app.route('/faculty_reports', methods=['GET', 'POST'])
 def faculty_reports():

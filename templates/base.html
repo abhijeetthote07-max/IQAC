@@ -11,7 +11,11 @@
 <header class="site-header">
     <div class="container header-inner">
         <div class="brand">
-            <img src="{{ url_for('static', filename='logo.svg') }}" alt="MGMU IQAC logo" class="logo">
+            {% if request.endpoint == 'index' %}
+                <img src="{{ url_for('static', filename='logoMGM.svg') }}" alt="MGMU IQAC logo" class="logo">
+            {% else %}
+                <img src="{{ url_for('static', filename='logo.svg') }}" alt="MGMU IQAC logo" class="logo">
+            {% endif %}
             <div class="site-title">MGMU Internal Quality Asessment Cell</div>
         </div>
         <nav class="site-nav">
