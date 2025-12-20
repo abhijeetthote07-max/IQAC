@@ -218,6 +218,55 @@ def audit_reports():
             save_faculty_reports()
     return render_template('audit_reports.html', reports=app.config['FACULTY_REPORTS'])
 
+
+@app.route('/audit_questionnaire/<int:report_index>', methods=['GET', 'POST'])
+def audit_questionnaire(report_index):
+    # Only auditors may perform detailed audits
+    if session.get('role') != 'auditor':
+        return redirect(url_for('login'))
+
+    # basic bounds check
+    if report_index < 0 or report_index >= len(app.config['FACULTY_REPORTS']):
+        return redirect(url_for('audit_reports'))
+
+    # questionnaire - extend or move to a config/file if needed
+    questions = [
+        "Are teaching-learning processes satisfactory?",
+        "Is documentation complete and up-to-date?",
+        "Are learning outcomes assessed regularly?",
+        "Is faculty development activity documented?",
+        "Is student feedback handled appropriately?"
+    ]
+
+    report = app.config['FACULTY_REPORTS'][report_index]
+
+    if request.method == 'POST':
+        answers = {}
+        for i, q in enumerate(questions):
+            val = request.form.get(f'q_{i}', '').upper()
+            if val not in ['Y', 'N']:
+                val = 'N'
+            answers[q] = val
+
+        notes = request.form.get('auditor_notes', '').strip()
+        grade = request.form.get('grade', '').strip()
+        institute = request.form.get('institute', '').strip()
+
+        report['audit_answers'] = answers
+        report['auditor_notes'] = notes
+        report['audit_grade'] = grade
+        report['audited_institute'] = institute
+        save_faculty_reports()
+
+        # if auditor selected an institute and grade, update credits
+        if institute and grade:
+            app.config['CREDITS'][institute] = grade
+            save_credits()
+
+        return redirect(url_for('audit_reports'))
+
+    return render_template('audit_questionnaire.html', report=report, report_index=report_index, questions=questions, institutes=app.config['INSTITUTES'], credits=app.config['CREDITS'])
+
 @app.route('/assign_grades', methods=['GET', 'POST'])
 def assign_grades():
     if session.get('role') != 'auditor':

@@ -27,6 +27,7 @@
                     <label>Notes:</label>
                     <textarea name="auditor_notes" rows="2" placeholder="Auditor feedback...">{{ report.auditor_notes }}</textarea>
                     <button type="submit" style="margin-left:10px;">Update</button>
+                    <a href="{{ url_for('audit_questionnaire', report_index=loop.index0) }}"><button type="button" style="margin-left:10px;">Start Audit</button></a>
                 </form>
             </div>
         {% endfor %}
