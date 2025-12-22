@@ -44,22 +44,31 @@ def save_faculty_reports():
     with open('faculty_reports.json', 'w') as f:
         json.dump(app.config['FACULTY_REPORTS'], f)
 
-def load_credits():
+def load_grades():
     try:
-        with open('credits.json', 'r') as f:
+        with open('grades.json', 'r') as f:
             return json.load(f)
     except:
         return {}
 
-def save_credits():
-    with open('credits.json', 'w') as f:
-        json.dump(app.config['CREDITS'], f)
+def save_grades():
+    with open('grades.json', 'w') as f:
+        json.dump(app.config['GRADES'], f)
+
+def load_credits_data():
+    try:
+        with open('credits.json', 'r') as f:
+            return json.load(f)
+    except:
+        return []
 
 # load at startup
 app.config['INSTITUTES'] = load_institutes()
 app.config['FACULTY_DETAILS'] = load_faculty_details()
 app.config['FACULTY_REPORTS'] = load_faculty_reports()
-app.config['CREDITS'] = load_credits()
+app.config['GRADES'] = load_grades()
+app.config['CREDITS'] = load_credits_data()
+
 
 # Default credentials for roles (development only - replace with secure store)
 CREDENTIALS = {
@@ -89,7 +98,6 @@ REQUIRED_APPROVERS = [
     'auditor',
     'university_iqac_coordination',
     'registrar',
-    'chancellor',
     'vice_chancellor',
     'director',
     'iqac_coordinators',
@@ -344,14 +352,14 @@ def audit_questionnaire(report_index):
         report['audited_institute'] = institute
         save_faculty_reports()
 
-        # if auditor selected an institute and grade, update credits
+        # if auditor selected an institute and grade, update grades
         if institute and grade:
-            app.config['CREDITS'][institute] = grade
-            save_credits()
+            app.config['GRADES'][institute] = grade
+            save_grades()
 
         return redirect(url_for('audit_reports'))
 
-    return render_template('audit_questionnaire.html', report=report, report_index=report_index, questions=questions, institutes=app.config['INSTITUTES'], credits=app.config['CREDITS'])
+    return render_template('audit_questionnaire.html', report=report, report_index=report_index, questions=questions, institutes=app.config['INSTITUTES'], grades=app.config['GRADES'])
 
 @app.route('/assign_grades', methods=['GET', 'POST'])
 def assign_grades():
@@ -361,9 +369,9 @@ def assign_grades():
         institute = request.form.get('institute')
         grade = request.form.get('grade')
         if institute and grade:
-            app.config['CREDITS'][institute] = grade
-            save_credits()
-    return render_template('assign_grades.html', institutes=app.config['INSTITUTES'], credits=app.config['CREDITS'])
+            app.config['GRADES'][institute] = grade
+            save_grades()
+    return render_template('assign_grades.html', institutes=app.config['INSTITUTES'], grades=app.config['GRADES'])
 
 @app.route('/select_institute', methods=['POST'])
 def select_institute():
@@ -396,6 +404,10 @@ def remove_institute():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/credits')
+def credits():
+    return render_template('credits.html', credits=app.config['CREDITS'])
 
 if __name__ == "__main__":
     app.run(debug=True)
