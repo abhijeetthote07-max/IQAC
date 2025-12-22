@@ -1,5 +1,5 @@
 @echo off
 echo "Installing dependencies..."
-pip install -r requirements.txt
+"C:\Users\hp\AppData\Local\Programs\Python\Python314\python.exe" -m pip install -r requirements.txt
 echo "Running the application..."
-python app.py
+"C:\Users\hp\AppData\Local\Programs\Python\Python314\python.exe" app.py
