@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple animated placeholder logo (replace with your real SVG if you have one) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" aria-hidden="false" role="img" class="logo">
+  <title>MGMU Logo</title>
+  <rect width="200" height="60" rx="6" fill="none"/>
+
+  <!-- pulsing circle -->
+  <g transform="translate(30,30)">
+    <circle cx="0" cy="0" r="12" fill="#0b3d91" opacity="1">
+      <animate attributeName="r" values="10;14;10" dur="1.6s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="1;0.6;1" dur="1.6s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="20" fill="none" stroke="#0b3d91" stroke-width="2" opacity="0.35">
+      <animate attributeName="r" values="18;26;18" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+  <!-- text -->
+  <text x="60" y="36" font-family="Verdana, Arial, sans-serif" font-size="18" fill="#0b3d91" font-weight="700">MGMU</text>
+  <text x="60" y="50" font-family="Verdana, Arial, sans-serif" font-size="10" fill="#444">Internal Quality Assessment Cell</text>
+</svg>
