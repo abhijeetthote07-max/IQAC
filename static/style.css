@@ -38,7 +38,11 @@ body {
     align-items:center;
     gap:12px;
 }
-.logo{ width:48px;height:48px }
+/* Logo sizing + subtle entrance and hover animation */
+.logo{ width:64px; height:64px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
+.logo.logo-object{ overflow:visible; transition: transform .45s cubic-bezier(.2,.9,.2,1); }
+.logo.logo-object:hover{ transform: scale(1.06) rotate(-2deg); }
+@keyframes logo-entrance { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: none; } }
 .site-title{ font-weight:700; font-size:1.05rem }
 
 .site-nav a{
