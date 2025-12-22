@@ -1,8 +1,8 @@
 /* Brown-themed site styles */
 :root{
-    --brown-900: #3b2f2f;
-    --brown-800: #6b4b3a;
-    --brown-700: #8b5e3c;
+    --brown-900: hsla(29, 94%, 25%, 0.882);
+    --brown-800: hsl(29, 94%, 25%, 0.882);
+    --brown-700: hsl(29,94%, 25%, 0.882);
     --brown-500: #b98f6b;
     --accent: #d9c4a6;
     --muted: #f5f0ec;

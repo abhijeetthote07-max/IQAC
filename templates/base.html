@@ -27,6 +27,7 @@
                             <option value="{{ inst }}" {% if selected_institute==inst %}selected{% endif %}>{{ inst }}</option>
                         {% endfor %}
                     </select>
+                    
                 </form>
                 <a href="{{ url_for('admin') }}">Admin</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
