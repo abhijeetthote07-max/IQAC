@@ -11,7 +11,12 @@
 <header class="site-header">
     <div class="container header-inner">
         <div class="brand">
-            <img src="{{ url_for('static', filename='logo.svg') }}" alt="MGMU IQAC logo" class="logo">
+            <object type="image/svg+xml"
+                    data="{{ url_for('static', filename='svg/mgm-logo.svg') }}"
+                    class="logo logo-object" aria-label="MGM University logo" title="MGM University">
+                <!-- Fallback for older browsers or if object fails -->
+                <img src="{{ url_for('static', filename='logo.svg') }}" alt="MGMU IQAC logo" class="logo">
+            </object>
             <div class="site-title">MGMU Internal Quality Asessment Cell</div>
         </div>
         <nav class="site-nav">
