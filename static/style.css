@@ -39,7 +39,7 @@ body {
     gap:12px;
 }
 /* Logo sizing + subtle entrance and hover animation */
-.logo{ width:64px; height:64px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
+.logo{ width:96px; height:96px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
 .logo.logo-object{ overflow:visible; transition: transform .45s cubic-bezier(.2,.9,.2,1); }
 .logo.logo-object:hover{ transform: scale(1.06) rotate(-2deg); }
 @keyframes logo-entrance { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: none; } }
@@ -94,5 +94,7 @@ button.danger:hover{ opacity:0.95 }
     .header-inner{ flex-direction:column; gap:12px }
     .site-nav{ display:flex; gap:8px }
     .form-box{ width:100% }
+    /* Reduce logo on narrow screens */
+    .logo{ width:64px; height:64px; }
 }
 
