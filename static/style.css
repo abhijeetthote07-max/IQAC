@@ -34,9 +34,11 @@ body {
 }
 
 .site-header{
+    position: relative;
     background: #fbf7f4;
     color: var(--brown-900);
     padding: 18px 0;
+    padding-left: 140px;
 }
 .brand{
     display:flex;
@@ -44,17 +46,43 @@ body {
     gap:12px;
 }
 /* Logo sizing + subtle entrance and hover animation */
-.logo{ width:96px; height:96px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
+.logo{ width:110px; height:110px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
 .logo.logo-object{ overflow:visible; transition: transform .45s cubic-bezier(.2,.9,.2,1); }
 .logo.logo-object:hover{ transform: scale(1.06) rotate(-2deg); }
-@keyframes logo-entrance { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: none; } }
-.site-title{ font-weight:700; font-size:1.05rem }
 
+.header-left{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    z-index:10;
+}
+
+.site-title{ font-weight:700; font-size:1.15rem; margin-left:8px; color:var(--brown-900) }
+
+@keyframes logo-entrance { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: none; } }
+
+.site-nav{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    gap:10px;
+    align-items:center;
+    z-index:20;
+}
 .site-nav a{
     color: var(--brown-900);
     text-decoration:none;
-    margin-left:18px;
-    font-weight:600;
+    margin-left:0;
+    font-weight:700;
+    font-size:1.05rem;
+    padding:8px 10px;
+    border-radius:6px;
 }
 .site-nav a:hover{ text-decoration:underline }
 
@@ -97,7 +125,15 @@ button.danger:hover{ opacity:0.95 }
 
 @media (max-width:700px){
     .header-inner{ flex-direction:column; gap:12px }
-    .site-nav{ display:flex; gap:8px }
+    .site-nav{
+        position:static;
+        transform:none;
+        right:auto;
+        top:auto;
+        display:flex;
+        gap:8px;
+    }
+    .site-nav a{ font-size:0.95rem; padding:6px 8px }
     .form-box{ width:100% }
     /* Reduce logo on narrow screens */
     .logo{ width:64px; height:64px; }

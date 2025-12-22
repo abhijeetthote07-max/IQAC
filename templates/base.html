@@ -9,14 +9,13 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="container header-inner">
-        <div class="brand">
- 
-            <a href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='svg/LogoMGM.svg') }}" alt="MGMU IQAC logo" class="logo">
-            </a>
+    <div class="header-left">
+        <a href="{{ url_for('index') }}" class="brand">
+            <img src="{{ url_for('static', filename='svg/LogoMGM.svg') }}" alt="MGMU IQAC logo" class="logo">
             <div class="site-title">MGMU Internal Quality Asessment Cell</div>
-        </div>
+        </a>
+    </div>
+    <div class="container header-inner">
         <nav class="site-nav">
             <a href="{{ url_for('index') }}">Home</a>
             {% if is_admin %}
