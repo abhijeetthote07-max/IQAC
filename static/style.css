@@ -34,8 +34,8 @@ body {
 }
 
 .site-header{
-    background: linear-gradient(90deg,var(--brown-900),var(--brown-800));
-    color: var(--accent);
+    background: #fedfcb;
+    color: var(--brown-900);
     padding: 18px 0;
 }
 .brand{
@@ -51,7 +51,7 @@ body {
 .site-title{ font-weight:700; font-size:1.05rem }
 
 .site-nav a{
-    color: var(--accent);
+    color: var(--brown-900);
     text-decoration:none;
     margin-left:18px;
     font-weight:600;
@@ -83,7 +83,7 @@ p{ color:#4b3e3b }
 label{ display:block; margin-top:12px; font-weight:600 }
 input, select{ width:100%; padding:10px; margin-top:6px; border:1px solid #e7dfda; border-radius:6px }
 button{ padding:10px 14px; border-radius:6px; border:none }
-button[type=submit]{ background:var(--brown-700); color:var(--accent); font-weight:700 }
+button[type=submit]{ background:var(--brown-700); color:var(--brown-900); font-weight:700 }
 button.cancel{ background:#ddd }
 
 .captcha{ font-weight:700; background:#efe6db; padding:6px 8px; border-radius:4px }
