@@ -32,9 +32,9 @@
 
     <div style="margin-top:18px;">
         <h3>Current Grades</h3>
-        {% if credits %}
+        {% if grades %}
             <ul>
-                {% for inst, grade in credits.items() %}
+                {% for inst, grade in grades.items() %}
                     <li>{{ inst }}: Grade {{ grade }}</li>
                 {% endfor %}
             </ul>

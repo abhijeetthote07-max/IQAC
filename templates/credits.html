@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Credits - {{ super() }}{% endblock %}
+{% block content %}
+    <h1>Credits</h1>
+    <p>This project was created by the following people:</p>
+    <ul>
+        {% for person in credits %}
+            <li>{{ person.name }} - {{ person.role }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,9 +1,9 @@
 /* Brown-themed site styles */
 :root{
-    --brown-900: #3b2f2f;
-    --brown-800: #6b4b3a;
-    --brown-700: #8b5e3c;
-    --brown-500: #b98f6b;
+    --brown-900: hsla(29, 88%, 22%, 0.882);
+    --brown-800: hsla(29, 96%, 20%, 0.882);
+    --brown-700: hsla(29, 93%, 32%, 0.882);
+    --brown-500: #fde7d3;
     --accent: #d9c4a6;
     --muted: #f5f0ec;
 }
@@ -11,7 +11,12 @@
 *{box-sizing:border-box}
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(180deg,var(--muted),#fff);
+    background-color: var(--muted);
+    background-image: linear-gradient(180deg, rgba(245,240,236,0.85), rgba(255,255,255,0.85)), url('/static/images/background.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
     color: var(--brown-900);
     margin:0;
 }
@@ -29,23 +34,55 @@ body {
 }
 
 .site-header{
-    background: linear-gradient(90deg,var(--brown-900),var(--brown-800));
-    color: var(--accent);
+    position: relative;
+    background: rgba(251, 247, 244, 0.85);
+    color: var(--brown-900);
     padding: 18px 0;
+    padding-left: 140px;
 }
 .brand{
     display:flex;
     align-items:center;
     gap:12px;
 }
-.logo{ width:48px;height:48px }
-.site-title{ font-weight:700; font-size:1.05rem }
+/* Logo sizing + subtle entrance and hover animation */
+.logo{ width:110px; height:110px; display:inline-block; vertical-align:middle; animation: logo-entrance .6s ease both; }
+.logo.logo-object{ overflow:visible; transition: transform .45s cubic-bezier(.2,.9,.2,1); }
+.logo.logo-object:hover{ transform: scale(1.06) rotate(-2deg); }
 
+.header-left{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    z-index:10;
+}
+
+.site-title{ font-weight:700; font-size:1.15rem; margin-left:8px; color:var(--brown-900) }
+
+@keyframes logo-entrance { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: none; } }
+
+.site-nav{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    gap:10px;
+    align-items:center;
+    z-index:20;
+}
 .site-nav a{
-    color: var(--accent);
+    color: var(--brown-900);
     text-decoration:none;
-    margin-left:18px;
-    font-weight:600;
+    margin-left:0;
+    font-weight:700;
+    font-size:1.05rem;
+    padding:8px 10px;
+    border-radius:6px;
 }
 .site-nav a:hover{ text-decoration:underline }
 
@@ -66,7 +103,7 @@ p{ color:#4b3e3b }
 /* Form styles */
 .form-box{
     max-width:420px;
-    background:#fff;
+    background: rgba(255, 255, 255, 0.85);
     padding:22px;
     border-radius:8px;
     box-shadow: 0 6px 18px rgba(59,47,47,0.06);
@@ -74,13 +111,20 @@ p{ color:#4b3e3b }
 label{ display:block; margin-top:12px; font-weight:600 }
 input, select{ width:100%; padding:10px; margin-top:6px; border:1px solid #e7dfda; border-radius:6px }
 button{ padding:10px 14px; border-radius:6px; border:none }
-button[type=submit]{ background:var(--brown-700); color:var(--accent); font-weight:700 }
+button[type=submit]{ background:var(--brown-700); color:var(--brown-900); font-weight:700 }
 button.cancel{ background:#ddd }
 
 .captcha{ font-weight:700; background:#efe6db; padding:6px 8px; border-radius:4px }
 .msg{ text-align:center; margin-top:14px; color:var(--brown-700); font-weight:600 }
 
-.site-footer{ padding:18px 0; text-align:center; background:#faf7f6; color:#6b4b3a; margin-top:30px }
+.site-footer{ padding:18px 0; text-align:center; background: rgba(250, 247, 246, 0.85); color:#6b4b3a; margin-top:30px }
+
+.content-box {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(59,47,47,0.04);
+}
 
 /* small danger button for delete/remove actions */
 button.danger{ background:#b74444; color:#fff; padding:8px 10px; border-radius:6px; border:none; font-weight:700 }
@@ -88,7 +132,17 @@ button.danger:hover{ opacity:0.95 }
 
 @media (max-width:700px){
     .header-inner{ flex-direction:column; gap:12px }
-    .site-nav{ display:flex; gap:8px }
+    .site-nav{
+        position:static;
+        transform:none;
+        right:auto;
+        top:auto;
+        display:flex;
+        gap:8px;
+    }
+    .site-nav a{ font-size:0.95rem; padding:6px 8px }
     .form-box{ width:100% }
+    /* Reduce logo on narrow screens */
+    .logo{ width:64px; height:64px; }
 }
 

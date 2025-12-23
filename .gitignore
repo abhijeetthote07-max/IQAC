@@ -1,0 +1,139 @@
+#-*- mode: git-ignore -*-
+#
+# A sensible default .gitignore for Python projects.
+# See https://github.com/github/gitignore/blob/main/Python.gitignore
+#
+# This file is in the public domain.
+
+### User-specific ###
+
+# My local stuff
+.idea/
+*.swo
+*.swp
+*.pyc
+
+# Build artifacts
+dist/
+build/
+
+# Distribution / packaging
+.Python
+env/
+.env
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# pyenv
+#   For more information, see https://github.com/pyenv/pyenv and
+#   https://github.com/pyenv/pyenv-virtualenv
+.python-version
+
+# Serverless plugin
+.serverless/
+
+### Patterns - no need to edit below this line ###
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.bundle/
+.eggs/
+*.egg-info/
+*.egg
+  
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyflow
+pyflow.lock
+
+# PEP 582; used by e.g. pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+__test_flask.py

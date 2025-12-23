@@ -9,15 +9,13 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="container header-inner">
-        <div class="brand">
-            {% if request.endpoint == 'index' %}
-                <img src="{{ url_for('static', filename='logoMGM.svg') }}" alt="MGMU IQAC logo" class="logo">
-            {% else %}
-                <img src="{{ url_for('static', filename='logo.svg') }}" alt="MGMU IQAC logo" class="logo">
-            {% endif %}
+    <div class="header-left">
+        <a href="{{ url_for('index') }}" class="brand">
+            <img src="{{ url_for('static', filename='svg/LogoMGM.svg') }}" alt="MGMU IQAC logo" class="logo">
             <div class="site-title">MGMU Internal Quality Asessment Cell</div>
-        </div>
+        </a>
+    </div>
+    <div class="container header-inner">
         <nav class="site-nav">
             <a href="{{ url_for('index') }}">Home</a>
             {% if is_admin %}
@@ -28,6 +26,7 @@
                             <option value="{{ inst }}" {% if selected_institute==inst %}selected{% endif %}>{{ inst }}</option>
                         {% endfor %}
                     </select>
+                    
                 </form>
                 <a href="{{ url_for('admin') }}">Admin</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
@@ -53,6 +52,7 @@
 <footer class="site-footer">
     <div class="container">
         <small>&copy; {{ current_year }} MGMU Internal Quality Asessment Cell</small>
+        <small><a href="{{ url_for('credits') }}">Credits</a></small>
     </div>
 </footer>
 
