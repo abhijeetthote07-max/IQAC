@@ -9,13 +9,37 @@
   <p><strong>Content:</strong> {{ report.content }}</p>
 
   <form method="POST">
+    <label for="additional_questions_input">Add custom questions (one per line)</label>
+    <textarea id="additional_questions_input" rows="3" placeholder="Enter one question per line"></textarea>
+    <div style="margin:6px 0 12px 0">
+      <button type="button" id="generate_questions_btn">Generate Questions</button>
+      <button type="button" id="clear_generated_btn">Clear Generated</button>
+    </div>
+
+    <!-- Hidden field to keep total number of questions (default + generated) -->
+    <input type="hidden" name="total_questions" id="total_questions" value="{{ questions|length }}">
+
+    <!-- Default and previously-saved questions -->
     {% for i, q in enumerate(questions) %}
       <div style="margin-bottom:8px;">
         <label>{{ loop.index }}. {{ q }}</label><br>
         <label><input type="radio" name="q_{{ i }}" value="Y" {% if report.audit_answers and report.audit_answers.get(q) == 'Y' %}checked{% endif %}> Y</label>
         <label style="margin-left:10px;"><input type="radio" name="q_{{ i }}" value="N" {% if report.audit_answers and report.audit_answers.get(q) == 'N' %}checked{% endif %}> N</label>
+        {% if q not in [
+          "Are teaching-learning processes satisfactory?",
+          "Is documentation complete and up-to-date?",
+          "Are learning outcomes assessed regularly?",
+          "Is faculty development activity documented?",
+          "Is student feedback handled appropriately?"
+        ] %}
+          <!-- If this is a previously saved custom question, include a hidden field so server recognizes it on submit -->
+          <input type="hidden" name="custom_qtext_{{ loop.index0 }}" value="{{ q }}">
+        {% endif %}
       </div>
     {% endfor %}
+
+    <!-- Container where newly generated questions will be placed by JS -->
+    <div id="additional_questions_container"></div>
 
     <label for="institute">Institute (optional)</label>
     <select id="institute" name="institute">
@@ -46,6 +70,63 @@
       <a href="{{ url_for('audit_reports') }}"><button type="button">Cancel</button></a>
     </div>
   </form>
+
+  <script>
+    (function(){
+      var defaultCount = {{ questions|length }};
+      var index = defaultCount;
+      var container = document.getElementById('additional_questions_container');
+      var genBtn = document.getElementById('generate_questions_btn');
+      var clearBtn = document.getElementById('clear_generated_btn');
+      var textarea = document.getElementById('additional_questions_input');
+      var totalInput = document.getElementById('total_questions');
+
+      genBtn.addEventListener('click', function(){
+        var lines = textarea.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+        // clear previous generated ones
+        container.innerHTML = '';
+        index = defaultCount;
+        lines.forEach(function(line){
+          var div = document.createElement('div');
+          div.style.marginBottom = '8px';
+          var label = document.createElement('label');
+          label.textContent = (index+1) + '. ' + line;
+          div.appendChild(label);
+          div.appendChild(document.createElement('br'));
+
+          var ylab = document.createElement('label');
+          var yinput = document.createElement('input');
+          yinput.type = 'radio'; yinput.name = 'q_' + index; yinput.value = 'Y';
+          ylab.appendChild(yinput);
+          ylab.appendChild(document.createTextNode(' Y'));
+          div.appendChild(ylab);
+
+          var nlab = document.createElement('label');
+          nlab.style.marginLeft = '10px';
+          var ninput = document.createElement('input');
+          ninput.type = 'radio'; ninput.name = 'q_' + index; ninput.value = 'N';
+          nlab.appendChild(ninput);
+          nlab.appendChild(document.createTextNode(' N'));
+          div.appendChild(nlab);
+
+          var hidden = document.createElement('input');
+          hidden.type = 'hidden'; hidden.name = 'custom_qtext_' + index; hidden.value = line;
+          div.appendChild(hidden);
+
+          container.appendChild(div);
+          index +=1;
+        });
+        totalInput.value = index;
+      });
+
+      clearBtn.addEventListener('click', function(){
+         textarea.value = '';
+         container.innerHTML = '';
+         index = defaultCount;
+         totalInput.value = defaultCount;
+      });
+    })();
+  </script>
 
   {% if report.audit_answers %}
     <div style="margin-top:18px; border-top:1px solid #eee; padding-top:12px;">
