@@ -12,7 +12,7 @@
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--muted);
-    background-image: linear-gradient(180deg, rgba(245,240,236,0.6), rgba(255,255,255,0.6)), url('/static/images/background.jpeg');
+    background-image: linear-gradient(180deg, rgba(245,240,236,0.85), rgba(255,255,255,0.85)), url('/static/images/background.jpeg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -35,7 +35,7 @@ body {
 
 .site-header{
     position: relative;
-    background: #fbf7f4;
+    background: rgba(251, 247, 244, 0.85);
     color: var(--brown-900);
     padding: 18px 0;
     padding-left: 140px;
@@ -103,7 +103,7 @@ p{ color:#4b3e3b }
 /* Form styles */
 .form-box{
     max-width:420px;
-    background:#fff;
+    background: rgba(255, 255, 255, 0.85);
     padding:22px;
     border-radius:8px;
     box-shadow: 0 6px 18px rgba(59,47,47,0.06);
@@ -117,7 +117,14 @@ button.cancel{ background:#ddd }
 .captcha{ font-weight:700; background:#efe6db; padding:6px 8px; border-radius:4px }
 .msg{ text-align:center; margin-top:14px; color:var(--brown-700); font-weight:600 }
 
-.site-footer{ padding:18px 0; text-align:center; background:#faf7f6; color:#6b4b3a; margin-top:30px }
+.site-footer{ padding:18px 0; text-align:center; background: rgba(250, 247, 246, 0.85); color:#6b4b3a; margin-top:30px }
+
+.content-box {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(59,47,47,0.04);
+}
 
 /* small danger button for delete/remove actions */
 button.danger{ background:#b74444; color:#fff; padding:8px 10px; border-radius:6px; border:none; font-weight:700 }
